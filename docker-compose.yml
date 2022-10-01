@@ -25,7 +25,7 @@ services:
     ports:
       - "4306:3306"
     volumes:
-      - ./mysql:/var/lib/mysql
+      - mysql_data:/var/lib/mysql
     environment:
       MYSQL_DATABASE: "homestead"
       MYSQL_USER: "homestead"
@@ -53,3 +53,4 @@ networks:
 
 volumes:
   phpsocket:
+  mysql_data:
