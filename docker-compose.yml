@@ -1,0 +1,55 @@
+version: '3.9'
+services:
+  webserver:
+    depends_on:
+      - database
+      - php
+    networks:
+      - laravel
+    # image: nginx:alpine
+    build: 
+      context: .
+      dockerfile: ./nginx/Dockerfile
+    container_name: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./src:/var/www/html
+      - phpsocket:/run/php/
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+  database:
+    image: mysql:latest
+    container_name: mysql
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "4306:3306"
+    volumes:
+      - ./mysql:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: "homestead"
+      MYSQL_USER: "homestead"
+      MYSQL_PASSWORD: "mysecret"
+      MYSQL_ROOT_PASSWORD: "mysecret"
+      SERVICE_TAGS: "dev"
+      SERVICE_NAME: "mysql"
+
+    networks:
+      - laravel
+  
+  php:
+    build:
+      context: .
+      dockerfile: ./php-fpm/Dockerfile
+    container_name: php
+    volumes: 
+      - ./src:/var/www/html
+      - phpsocket:/run/php/
+    networks:
+      - laravel
+
+networks:
+  laravel:
+
+volumes:
+  phpsocket:
